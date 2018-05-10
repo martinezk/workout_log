@@ -1,4 +1,5 @@
 class WorkoutsController < ApplicationController
+  before_action :find_workout, only: [:show, :edit, :update, :destoy]
   def index
     @workouts = Workout.all.order("created_at DESC")
   end
@@ -24,16 +25,23 @@ class WorkoutsController < ApplicationController
   end
 
   def update
+    if @workout.update(workout_params)
+      redirect_to @workout
+    else
+      render 'edit'
+    end
   end
 
   def destroy
+    @workout.destroy
+    redirect_to root_path
   end
 
   private
 
   def workout_params
-    params.require(:workout).permit(:date, :workout, :mood, :length)
-  end
+		params.require(:workout).permit(:date, :workout, :mood, :length)
+	end
 
   def find_workout
     @workout = Workout.find(params[:id])
